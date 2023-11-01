@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+import time
 
 def crear_conexion(base_datos):
     """
@@ -97,16 +98,23 @@ def insertar_imagen(conexion, nombre, imagen):
 
 def obtener_imagen_por_id(conexion, id):
     """
-    Obtiene una imagen de la base de datos por su ID.
+    Obtiene una imagen de la base de datos por su ID y verifica el rendimiento.
 
     :param conexion: Objeto de conexión SQLite.
     :param id: ID de la imagen.
     :return: Bytes de la imagen recuperada.
     
-    Ejemplo:
+    Ejemplo de rendimiento:
     
+    >>> start_time = time.time()
+    >>> imagen_recuperada = obtener_imagen_por_id(conexion, 1)
+    >>> end_time = time.time()
+    >>> elapsed_time = end_time - start_time
+    >>> elapsed_time < 1.0  # Verifica que la función se ejecute en menos de 1 segundo
+    True
+
+    Ejemplo de tipo de resultado:
     
-    >>> imagen_recuperada = obtener_imagen_por_id(conexion,1)
     >>> type(imagen_recuperada)
     <class 'bytes'>
     """
