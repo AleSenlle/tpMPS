@@ -9,7 +9,6 @@ def crear_conexion(base_datos):
     except Error as e:
         print(e)
     return conexion
-
 conexion = crear_conexion("mi_base_de_datos.db")
 
 def crear_tabla(conexion):
@@ -25,18 +24,14 @@ def crear_tabla(conexion):
         conexion.commit()
     except Error as e:
         print(e)
-
 crear_tabla(conexion)
-
 
 def leer_imagen(ruta_archivo):
     with open(ruta_archivo, 'rb') as archivo:
         imagen = archivo.read()
     return imagen
 
-"""ruta_imagen = 'perro.jpg'  # Reemplaza esto con la ruta de tu imagen"""
-
-
+ruta_imagen = './perro.jpg'  
 
 def insertar_imagen(conexion, nombre, imagen):
     try:
@@ -47,9 +42,6 @@ def insertar_imagen(conexion, nombre, imagen):
     except Error as e:
         print(e)
 
-
-
-
 def obtener_imagen_por_id(conexion, id):
     try:
         cursor = conexion.cursor()
@@ -59,13 +51,8 @@ def obtener_imagen_por_id(conexion, id):
             return resultado[0]
     except Error as e:
         print(e)
-
-
-
-
 imagen = leer_imagen('perro.jpg')
 
-nombre_imagen = 'perro.jpg'  # Reemplaza esto con el nombre que desees
+nombre_imagen = 'perro.jpg'
 id_imagen = insertar_imagen(conexion, nombre_imagen, imagen)
-
 imagen_recuperada = obtener_imagen_por_id(conexion, id_imagen)
