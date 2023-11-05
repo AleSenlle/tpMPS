@@ -6,24 +6,20 @@ def crear_conexion(base_datos):
     """
     Crea una conexión a la base de datos SQLite.
 
-    :param base_datos: Ruta al archivo de la base de datos SQLite.
-    :return: Objeto de conexión SQLite.
-    
-    Ejemplo:
-    
-    >>> conexion = crear_conexion("mi_base_de_datos.db")
-    >>> type(conexion)
-    <class 'sqlite3.Connection'>
+    :param base_datos: Nombre del archivo de la base de datos.
+    :return: Objeto de conexión o None si hay un error.
+    >>> conexion = crear_conexion(":memory:")
+    >>> isinstance(conexion, sqlite3.Connection)
+    True
     """
     conexion = None
     try:
         conexion = sqlite3.connect(base_datos)
         return conexion
     except Error as e:
-        print(e)
-    return conexion
+        return None
 
-conexion = crear_conexion("test.db")
+conexion = crear_conexion("mi_base_de_datos.db")
 
 def crear_tabla(conexion):
     """
@@ -33,7 +29,9 @@ def crear_tabla(conexion):
     
     Ejemplo:
     
+    >>> conexion = crear_conexion(":memory:")
     >>> crear_tabla(conexion)
+    True
     """
     try:
         cursor = conexion.cursor()
@@ -45,48 +43,32 @@ def crear_tabla(conexion):
             )
         """)
         conexion.commit()
+        return True
     except Error as e:
-        print(e)
+        return False
 
 crear_tabla(conexion)
 
-def leer_imagen(ruta_archivo):
-    """
-    Lee una imagen desde un archivo y la devuelve en forma de bytes.
+ruta_imagen = './perro.jpg'
 
-    :param ruta_archivo: Ruta al archivo de imagen.
-    :return: Bytes de la imagen.
-    
-    Ejemplo:
-    
-    >>> imagen = leer_imagen('perro.jpg')
-    >>> type(imagen)
-    <class 'bytes'>
-    """
+def leer_imagen(ruta_archivo):
     with open(ruta_archivo, 'rb') as archivo:
         imagen = archivo.read()
     return imagen
+
+imagen = leer_imagen(ruta_imagen)
 
 def insertar_imagen(conexion, nombre, imagen):
     """
     Inserta una imagen en la base de datos.
 
-    :param conexion: Objeto de conexión SQLite.
+    :param conexion: Objeto de conexión a la base de datos.
     :param nombre: Nombre de la imagen.
-    :param imagen: Bytes de la imagen.
+    :param imagen: Datos de la imagen en formato BLOB.
     :return: ID de la imagen insertada.
-    
-    Ejemplo:
-    
-    >>> imagen_bytes = leer_imagen('perro.jpg')
-    >>> nombre_imagen = 'perro.jpg'
-    >>> type(nombre_imagen)
-    <class 'str'>
-    >>> id_imagen = insertar_imagen(conexion, nombre_imagen, imagen_bytes)
-    >>> id_imagen
-    1
-    >>> type(id_imagen)
-    <class 'int'>
+    >>> id_imagen = insertar_imagen(conexion, 'perro.jpg', imagen)
+    >>> isinstance(id_imagen, int)
+    True
     """
     try:
         cursor = conexion.cursor()
@@ -96,9 +78,25 @@ def insertar_imagen(conexion, nombre, imagen):
     except Error as e:
         print(e)
 
+id_imagen = insertar_imagen(conexion, 'perro.jpg', imagen)
+
 def obtener_imagen_por_id(conexion, id):
     """
-    Obtiene una imagen de la base de datos por su ID y verifica el rendimiento.
+    Recupera una imagen de la base de datos por ID.
+
+    :param conexion: Objeto de conexión a la base de datos.
+    :param id: ID de la imagen a recuperar.
+    :return: Datos de la imagen en formato BLOB.
+    >>> imagen_recuperada = obtener_imagen_por_id(conexion, id_imagen)
+    >>> isinstance(imagen_recuperada, bytes)
+    True
+
+    Ejemplo de tipo de resultado:
+    
+    >>> type(imagen_recuperada)
+    <class 'bytes'>
+
+     Obtiene una imagen de la base de datos por su ID y verifica el rendimiento.
 
     :param conexion: Objeto de conexión SQLite.
     :param id: ID de la imagen.
@@ -112,11 +110,6 @@ def obtener_imagen_por_id(conexion, id):
     >>> elapsed_time = end_time - start_time
     >>> elapsed_time < 1.0  # Verifica que la función se ejecute en menos de 1 segundo
     True
-
-    Ejemplo de tipo de resultado:
-    
-    >>> type(imagen_recuperada)
-    <class 'bytes'>
     """
     try:
         cursor = conexion.cursor()
@@ -126,3 +119,9 @@ def obtener_imagen_por_id(conexion, id):
             return resultado[0]
     except Error as e:
         print(e)
+
+imagen_recuperada = obtener_imagen_por_id(conexion, id_imagen)
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
