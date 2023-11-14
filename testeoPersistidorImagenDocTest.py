@@ -108,7 +108,7 @@ def obtener_imagen_por_id(conexion, id):
     >>> imagen_recuperada = obtener_imagen_por_id(conexion, 1)
     >>> end_time = time.time()
     >>> elapsed_time = end_time - start_time
-    >>> elapsed_time < 1.0  # Verifica que la función se ejecute en menos de 1 segundo
+    >>> elapsed_time < 1.0  
     True
     """
     try:
